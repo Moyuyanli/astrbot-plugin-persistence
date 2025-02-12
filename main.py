@@ -30,8 +30,7 @@ class MyPlugin(Star):
         images = [component for component in message_link if isinstance(component, ComponentTypes.get("image"))]
 
         if images:
-            print(f"找到了 {len(images)} 个图片消息")
             for img in images:
-                print(f"图片路径: {img}")  # 假设 Image 类有一个 'path' 属性
+                logger.info(f"图片信息: {img}")  # 假设 Image 类有一个 'path' 属性
 
         yield event.plain_result("收到了一条私聊消息。")
