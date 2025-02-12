@@ -2,6 +2,7 @@ from astrbot.api import logger
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.event.filter import event_message_type
 from astrbot.api.star import Context, Star, register
+from astrbot.core.message.components import ComponentTypes
 from astrbot.core.star.filter.event_message_type import EventMessageType
 
 
@@ -24,4 +25,13 @@ class MyPlugin(Star):
     @event_message_type(EventMessageType.ALL)
     async def on_private_message(self, event: AstrMessageEvent):
         '''测试消息'''
+
+        message_link = event.message_obj.message
+        images = [component for component in message_link if isinstance(component, ComponentTypes.get("image"))]
+
+        if images:
+            print(f"找到了 {len(images)} 个图片消息")
+            for img in images:
+                print(f"图片路径: {img}")  # 假设 Image 类有一个 'path' 属性
+
         yield event.plain_result("收到了一条私聊消息。")
