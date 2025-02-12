@@ -32,7 +32,7 @@ class MyPlugin(Star):
         if images:
             for img in images:
                 logger.info(f"图片信息: {img}")  # 假设 Image 类有一个 'path' 属性
-                yield event.plain_result(img)
+                yield event.plain_result(img.file)
         else:
-            yield event.plain_result(f"收到了一条消息,类型{event.message_obj.type}")
+            yield event.plain_result(f"收到了一条消息,类型{event.message_obj.type.name}")
 
