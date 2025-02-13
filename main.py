@@ -1,10 +1,8 @@
-from astrbot.api import logger
+from astrbot import logger
 from astrbot.api.event import filter, AstrMessageEvent
-from astrbot.api.event.filter import event_message_type
+from astrbot.api.provider import ProviderRequest
 from astrbot.api.star import Context, Star, register
 from astrbot.core.message.components import ComponentTypes
-from astrbot.core.star.filter.event_message_type import EventMessageType
-from astrbot.api.provider import ProviderRequest
 
 
 @register("astrbot-persistence", "moyuyanli", "一个对于消息进行持久化的插件", "1.0.0",
@@ -38,6 +36,14 @@ class MyPlugin(Star):
     #         yield event.plain_result(f"收到了一条消息,类型{event.message_obj.type.name}")
 
     @filter.on_llm_request()
-    async def my_custom_hook_1(self, event: AstrMessageEvent, req: ProviderRequest):  # 请注意有三个参数
-        logger.info(f"消息类型 {event.message_obj.type}")
-        print(req)  # 打印请求的文本
+    async def my_custom_hook_1(self, event: AstrMessageEvent, req: ProviderRequest):
+        # 检查消息是否为纯文本消息
+        if isinstance(event.message_obj.message, list) and all(
+                isinstance(msg, ComponentTypes.get("text")) for msg in event.message_obj.message):
+            # 进一步检查每个文本消息是否为空
+            for msg in event.message_obj.message:
+                if not msg.content or not msg.content.strip():
+                    raise ValueError("消息内容不能为空")
+        else:
+            event.stop_event()
+        logger.info(req)  # 打印请求的文本
