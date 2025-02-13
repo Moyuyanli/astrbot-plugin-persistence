@@ -46,4 +46,4 @@ class MyPlugin(Star):
                     raise ValueError("消息内容不能为空")
         else:
             event.stop_event()
-        logger.info(req)  # 打印请求的文本
+        logger.info(f"请求信息 {req}")  # 打印请求的文本
