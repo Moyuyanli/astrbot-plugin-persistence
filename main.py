@@ -2,7 +2,6 @@ from astrbot import logger
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.provider import ProviderRequest
 from astrbot.api.star import Context, Star, register
-from astrbot.core.message.components import ComponentTypes
 
 
 @register("astrbot-persistence", "moyuyanli", "一个对于消息进行持久化的插件", "1.0.0",
@@ -35,25 +34,18 @@ class MyPlugin(Star):
     #     else:
     #         yield event.plain_result(f"收到了一条消息,类型{event.message_obj.type.name}")
 
-    from typing import List, Any
-
     @filter.on_llm_request()
     async def check_message_is_plan(self, event: AstrMessageEvent, req: ProviderRequest):
-        # 检查消息是否为纯文本消息
-        if isinstance(event.message_obj.message, list) and all(
-                isinstance(msg, ComponentTypes.get("text")) for msg in event.message_obj.message):
-            # 进一步检查每个文本消息是否为空
-            for msg in event.message_obj.message:
-                msg_content = msg.toString()
-                if not msg_content or not msg_content.strip():
-                    raise ValueError("消息内容不能为空")
-                if '[CQ' in msg_content:
-                    event.stop_event()
-                    return
-        else:
-            event.stop_event()
-            return
+        # 获取消息列表
+        messages = req.contexts or []
+
+        # 检查每个消息的内容是否为空
+        for msg in messages:
+            if 'content' in msg and isinstance(msg['content'], list):
+                for content_item in msg['content']:
+                    if 'text' in content_item and not content_item['text'].strip():
+                        # 如果发现消息内容为空，结束事件
+                        event.stop_event()
+                        return
 
         logger.info(f"请求信息 {req}")  # 打印请求的文本
-
-
