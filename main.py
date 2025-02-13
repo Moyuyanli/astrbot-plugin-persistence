@@ -35,15 +35,25 @@ class MyPlugin(Star):
     #     else:
     #         yield event.plain_result(f"收到了一条消息,类型{event.message_obj.type.name}")
 
+    from typing import List, Any
+
     @filter.on_llm_request()
-    async def my_custom_hook_1(self, event: AstrMessageEvent, req: ProviderRequest):
+    async def check_message_is_plan(self, event: AstrMessageEvent, req: ProviderRequest):
         # 检查消息是否为纯文本消息
         if isinstance(event.message_obj.message, list) and all(
                 isinstance(msg, ComponentTypes.get("text")) for msg in event.message_obj.message):
             # 进一步检查每个文本消息是否为空
             for msg in event.message_obj.message:
-                if not msg.content or not msg.content.strip():
+                msg_content = msg.toString()
+                if not msg_content or not msg_content.strip():
                     raise ValueError("消息内容不能为空")
+                if '[CQ' in msg_content:
+                    event.stop_event()
+                    return
         else:
             event.stop_event()
+            return
+
         logger.info(f"请求信息 {req}")  # 打印请求的文本
+
+
