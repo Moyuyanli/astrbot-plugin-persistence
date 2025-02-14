@@ -1,3 +1,5 @@
+import peewee
+
 from astrbot import logger
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.provider import ProviderRequest
@@ -7,8 +9,17 @@ from astrbot.api.star import Context, Star, register
 @register("astrbot-persistence", "moyuyanli", "一个对于消息进行持久化的插件", "1.0.0",
           "https://github.com/Moyuyanli/astrbot-plugin-persistence")
 class MyPlugin(Star):
-    def __init__(self, context: Context):
+
+    def __init__(self, context: Context, config: dict):
         super().__init__(context)
+        self.config = config
+        self.db = peewee.MySQLDatabase(
+            config.get("database"),
+            user=config.get("user"),
+            password=config.get("password"),
+            host=config.get("host"),
+            port=config.get("port"),
+        )
 
     # 注册指令的装饰器。指令名为 helloworld。注册成功后，发送 `/helloworld` 就会触发这个指令，并回复 `你好, {user_name}!`
     # @filter.command("helloworld")
