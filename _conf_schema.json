@@ -1,0 +1,32 @@
+{
+  "host": {
+    "description": "数据库地址",
+    "type": "string",
+    "hint": "数据库连接地址，如：127.0.0.1",
+    "obvious_hint": true
+  },
+  "port": {
+    "description": "数据库端口",
+    "type": "int",
+    "hint": "数据库连接端口，如：3306",
+    "obvious_hint": true
+  },
+  "database": {
+    "description": "数据库名称",
+    "type": "string",
+    "hint": "数据库连接数据库名，如：persistence",
+    "obvious_hint": true
+  },
+  "user": {
+    "description": "数据库用户名",
+    "type": "string",
+    "hint": "数据库用户名，如：root",
+    "obvious_hint": true
+  },
+  "password": {
+    "description": "数据库密码",
+    "type": "string",
+    "hint": "数据库密码，如：123456",
+    "obvious_hint": true
+  }
+}
