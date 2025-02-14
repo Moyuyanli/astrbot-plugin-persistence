@@ -13,6 +13,8 @@ class MyPlugin(Star):
     def __init__(self, context: Context, config: dict):
         super().__init__(context)
         self.config = config
+        if not config:
+            return
         self.db = peewee.MySQLDatabase(
             config.get("database"),
             user=config.get("user"),
