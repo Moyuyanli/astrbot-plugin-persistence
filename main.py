@@ -4,6 +4,7 @@ from astrbot import logger
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.provider import ProviderRequest
 from astrbot.api.star import Context, Star, register
+from entity import add_auth_user
 
 
 @register("astrbot-persistence", "moyuyanli", "一个对于消息进行持久化的插件", "1.0.0",
@@ -22,6 +23,8 @@ class MyPlugin(Star):
             host=config.get("host"),
             port=config.get("port"),
         )
+
+        add_auth_user(db=self.db, groupId="123456", userId="123456", type=1)
 
     # 注册指令的装饰器。指令名为 helloworld。注册成功后，发送 `/helloworld` 就会触发这个指令，并回复 `你好, {user_name}!`
     # @filter.command("helloworld")
